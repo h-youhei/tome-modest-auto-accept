@@ -40,7 +40,7 @@ function _M:getTarget(typ)
 	-- -- version that ignore auto-accept-target
 	-- TODO: last hovered by mouse but last attacked
 	-- if game.target.target and game.target.target.entity and game.tooltip.uis[1] and string.find(game.tooltip.uis[1].cur_item, game.target.target.entity.name) or enemies(typ.range) == 1 then
-	if enemies(typ.range) == 1 then
+	if enemies(typ and typ.range) == 1 then
 		config.settings.auto_accept_target = true
 		return super_getTarget(self, typ)
 	end
