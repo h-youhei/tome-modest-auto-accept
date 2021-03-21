@@ -26,25 +26,16 @@ end
 
 local super_getTarget = _M.getTarget
 function _M:getTarget(typ)
-	-- -- version that follow auto-accept-target
-	-- if config.settings.saved_auto_accept_target then
-	-- 	config.settings.auto_accept_target = true
-	-- 	config.settings.saved_auto_accept_target = false
-	-- end
-	-- if config.settings.auto_accept_target then
-	-- 	-- if game.target.target and (not game.target.target.entity) and enemies(typ.range) ~= 1 then
-	-- 	if enemies(typ.range) ~= 1 then
-	-- 		config.settings.auto_accept_target = false
-	-- 		config.settings.saved_auto_accept_target = true
-	-- 		return super_getTarget(self, typ)
-	-- 	end
-	-- end
+	if not config.settings.tome.modest_auto_accept_target then
+		config.settings.auto_accept_target = false
+		return super_getTarget(self, typ)
+	end
 
 	local mx, my = game.mouse.last_pos.x, game.mouse.last_pos.y
 	local tile_mx, tile_my = game.level.map:getMouseTile(mx,my)
-	local actor_hover = game.level.map(tile_mx, tile_my, Map.ACTOR)
-	local aiming = game.player:canSee(actor_hover) and
-game.target.target and game.target.target.entity and game.target.target.entity == actor_hover
+	local actor_hovered = game.level.map(tile_mx, tile_my, Map.ACTOR)
+	local aiming = game.player:canSee(actor_hovered) and
+game.target.target and game.target.target.entity and game.target.target.entity == actor_hovered
 	if aiming or enemies(typ and typ.range) == 1 then
 		config.settings.auto_accept_target = true
 		return super_getTarget(self, typ)
