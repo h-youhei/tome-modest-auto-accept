@@ -1,5 +1,8 @@
 local _M = loadPrevious(...)
 
+local Map = require "engine.Map"
+
+
 local function enemies(range)
 	local enemies = 0
 	if not game.player.x then return enemies end
@@ -37,10 +40,12 @@ function _M:getTarget(typ)
 	-- 	end
 	-- end
 
-	-- -- version that ignore auto-accept-target
-	-- TODO: last hovered by mouse but last attacked
-	-- if game.target.target and game.target.target.entity and game.tooltip.uis[1] and string.find(game.tooltip.uis[1].cur_item, game.target.target.entity.name) or enemies(typ.range) == 1 then
-	if enemies(typ and typ.range) == 1 then
+	local mx, my = game.mouse.last_pos.x, game.mouse.last_pos.y
+	local tile_mx, tile_my = game.level.map:getMouseTile(mx,my)
+	local actor_hover = game.level.map(tile_mx, tile_my, Map.ACTOR)
+	local aiming = game.player:canSee(actor_hover) and
+game.target.target and game.target.target.entity and game.target.target.entity == actor_hover
+	if aiming or enemies(typ and typ.range) == 1 then
 		config.settings.auto_accept_target = true
 		return super_getTarget(self, typ)
 	end
